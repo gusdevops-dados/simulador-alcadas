@@ -1,0 +1,93 @@
+📘 Documentação Técnica — Simulador de Políticas e Alçadas
+1. Descrição Técnica
+O aplicativo foi desenvolvido em Python utilizando o framework Streamlit, com foco em permitir que analistas definam, testem e comparem diferentes políticas de alçada aplicadas a reclamações de clientes.
+Principais pontos técnicos:
+Input de dados: Upload de planilhas CSV/XLSX com variáveis históricas de clientes e uma coluna de referência financeira (vlr_contest) e de data (data_contest).
+Detecção automática de tipos de variáveis:
+Numéricas (thresholds, ranges).
+Booleanas (ex.: bom pagador).
+Categóricas (ex.: canal de atendimento).
+Motor de Regras:
+Regras organizadas em grupos com lógica interna (AND/OR).
+Agregação de grupos sob uma lógica superior (AND/OR).
+Avaliação linha a linha do dataset, gerando colunas auxiliares: aprovado e motivo_negativa.
+Múltiplos cenários:
+O usuário pode criar, duplicar, salvar (JSON) e carregar cenários.
+Cada cenário é processado sob demanda através do botão “Gerar/Atualizar cenário”.
+Indicadores principais:
+Público total (N).
+Pote total (R$).
+Aprovados (N).
+Taxa de aprovação (%).
+Perdas (valor aprovado) R$ e %.
+Saving (valor negado) R$ e %.
+Anualização:
+Fator calculado com base no intervalo da coluna data_contest.
+Aplica-se tanto a valores monetários quanto a contagens.
+Exportação:
+Base analítica completa (CSV) por cenário, contendo colunas originais + aprovado + motivo_negativa.
+Comparativo de cenários em CSV.
+Bibliotecas principais:
+pandas, numpy: manipulação de dados.
+streamlit: front-end interativo.
+plotly.express: gráficos dinâmicos (barras de aprovação/negação, motivos).
+matplotlib: compatibilidade para gráficos adicionais.
+json, io: salvar/carregar configurações.
+
+
+2. Fluxo Técnico do Aplicativo
+flowchart TD
+    A[Upload da base CSV/XLSX] --> B[Detecção de tipos de variáveis]
+    B --> C[Configuração de regras (UI por cenário)]
+    C --> D[Botão "Gerar/Atualizar cenário"]
+    D --> E[Motor de avaliação linha a linha]
+    E --> F[Geração da base analítica: aprovado/negado + motivo]
+    F --> G[Cálculo de indicadores brutos]
+    G --> H[Opção: aplicar anualização (datas)]
+    H --> I[Exibição de KPIs por cenário]
+    H --> J[Visualização gráfica: Aprovados vs Negados, Motivos]
+    F --> K[Exportação CSV base analítica]
+    I --> L[Comparação de cenários]
+    L --> M[Exportação CSV comparativo]
+3. Guia de Utilização da Ferramenta
+📂 Upload da Base
+Clique em “Suba a base (CSV ou Excel)”.
+O arquivo deve conter ao menos:
+Colunas de variáveis utilizadas nas regras.
+vlr_contest: valor financeiro contestado.
+data_contest: data da contestação (para anualização).
+⚙️ Configuração de Cenários
+Acesse a aba de cada cenário (ex.: Cenário A).
+Defina:
+Agregação entre grupos: se todos os grupos devem ser satisfeitos (AND) ou basta um (OR).
+Regras dentro de cada grupo:
+Numéricas → ≥, ≤, ou intervalo.
+Booleanas → exigir True/False.
+Categóricas → valores permitidos.
+Adicione, duplique ou remova cenários no sidebar.
+Salve/importe configurações em JSON.
+▶️ Execução
+Após definir regras, clique em “Gerar/Atualizar cenário”.
+O processamento pode levar mais tempo em bases grandes.
+📊 Resultados
+Indicadores:
+Público total (linhas da base).
+Pote total (soma de vlr_contest).
+Aprovados (N).
+Taxa de aprovação (%).
+Perdas e Savings em R$ e %.
+Gráficos:
+Aprovados vs Negados.
+Motivos da negativa (quando Top Logic = AND).
+📈 Anualização
+Ative o checkbox “Anualizar valores (R$ e contagens)”.
+O sistema calcula automaticamente o período coberto pela base (data_contest) e ajusta os indicadores para projeção anual.
+Pode-se escolher como interpretar as datas (DD/MM/AAAA, MM/DD/AAAA, etc).
+📤 Exportação
+Em cada cenário:
+Base analítica (CSV) → todas as linhas com aprovado e motivo_negativa.
+Na aba 📊 Comparar:
+Comparativo de cenários (KPIs) → CSV.
+Agregações adicionais sobre variáveis numéricas, por população (Aprovados/Negados/Todos).
+👉 Assim você tem: descrição técnica para devs, fluxo técnico para arquitetura e guia de uso para stakeholders/usuários.
+Quer que eu monte esse material em PDF formatado (com seções, títulos e fluxograma embutido) para você já distribuir internamente?
